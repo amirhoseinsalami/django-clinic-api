@@ -1,0 +1,96 @@
+services:
+
+#django:
+  web:
+
+    build: .
+
+    command:
+      python manage.py runserver 0.0.0.0:8000
+
+
+    volumes:
+      - .:/app
+
+
+    ports:
+      - "8000:8000"
+
+
+    env_file:
+      - .env
+
+    #Start database before Django.
+    depends_on:
+      - db
+
+  #redis
+  redis:
+
+    image:
+      redis:7
+
+
+#postger
+  db:
+
+    image:
+      postgres:16
+
+
+    environment:
+      #keeps database data.
+      POSTGRES_DB:
+        clinic
+
+
+      POSTGRES_USER:
+        postgres
+
+
+      POSTGRES_PASSWORD:
+        password
+
+
+    ports:
+
+      - "5432:5432"
+
+
+    volumes:
+
+      - postgres_data:/var/lib/postgresql/data
+
+worker:
+
+  build: .
+
+  command:
+
+    celery -A config worker --loglevel=info
+
+
+  depends_on:
+
+    - redis
+
+    - db
+
+beat:
+
+  build: .
+
+
+  command:
+
+    celery -A config beat --loglevel=info
+
+
+  depends_on:
+
+    - redis
+
+
+volumes:
+
+  postgres_data:
