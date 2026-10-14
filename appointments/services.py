@@ -41,15 +41,12 @@ def create_appointment(patient, doctor, appointment_time):
 
 def doctor_is_available(doctor, appointment_time):
 
-    day = appointment_time.weekday()
-
-    time = appointment_time.time()
-
-    return Appointment.objects.filter(
-        day_of_week=day,
-        start_time__lte=time,
-        end_time__gte=time
+    exists = Appointment.objects.filter(
+        doctor=doctor,
+        appointment_time=appointment_time
     ).exists()
+
+    return not exists
 
 
 def cancel_appointment(appointment, user):
