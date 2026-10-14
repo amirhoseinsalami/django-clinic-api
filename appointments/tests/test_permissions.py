@@ -2,6 +2,8 @@ import pytest
 
 from rest_framework.test import APIClient
 
+from unittest.mock import patch
+
 from accounts.models import User
 
 from appointments.models import Appointment
