@@ -23,7 +23,7 @@ def test_patient_can_create_appointment():
     )
 
     doctor = DoctorProfile.objects.create_user(
-        user=doctor__user,
+        user=doctor_user,
         experience_years=10,
         consultation_fee=500000
     )
