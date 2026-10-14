@@ -8,6 +8,9 @@ from appointments.models import Appointment
 
 from doctors.models import DoctorProfile
 
+from django.utils import timezone
+from datetime import timedelta
+
 @pytest.mark.django_db
 def test_patient_cannot_see_other_patient_appointment():
 
@@ -24,15 +27,15 @@ def test_patient_cannot_see_other_patient_appointment():
        )
 
     doctor_user = User.objects.create_user(
-    username="dr ali",
-    password="ali6251",
-    role="DOCTOR"
+        username="dr ali",
+        password="ali6251",
+        role="DOCTOR"
 )
 
     doctor = DoctorProfile.objects.create(
-    user=doctor_user,
-    experienced_years=10,
-    consultation_fee=500000
+        user=doctor_user,
+        experienced_years=10,
+        consultation_fee=500000
 )
 
     appointment = Appointment.objects.create(
@@ -44,7 +47,7 @@ def test_patient_cannot_see_other_patient_appointment():
     client = APIClient()
 
     client.force_authenticate(
-        patient=patient1
+        user=patient1
     )
 
     response = client.get(
@@ -81,7 +84,6 @@ def test_cannot_book_same_time_twice():
         consultation_fee=500000
     )
 
-    
 
     client = APIClient()
 
@@ -93,7 +95,7 @@ def test_cannot_book_same_time_twice():
         f'/api/appointments/',
         {
             'doctor' : doctor.id,
-            'appointment_time' : '2024-10-9T10:30:00'
+            'appointment_time' : timezone.now() + timedelta(days=5)
         }
     )
 
@@ -105,7 +107,7 @@ def test_cannot_book_same_time_twice():
         f'/api/appointments/',
         {
             'doctor' : doctor.id,
-            'appointment_time' : '2024-10-9T10:30:00'
+            'appointment_time' : timezone.now() + timedelta(days=5)
         }
     )
 

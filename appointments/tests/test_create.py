@@ -4,7 +4,10 @@ from rest_framework.test import APIClient
 
 from accounts.models import User
 
-from doctors.models import DoctorProfile 
+from doctors.models import DoctorProfile
+
+from django.utils import timezone
+from datetime import timedelta
 
 
 @pytest.mark.django_db
@@ -38,7 +41,7 @@ def test_patient_can_create_appointment():
         '/api/appointments/',
         {
             'doctor' : doctor.id,
-            'appointment_time' : '2026-10-10T10:30:00'
+            'appointment_time': timezone.now() + timedelta(days=5)
         }
     )
 
