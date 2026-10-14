@@ -21,7 +21,7 @@ class DoctorProfile(models.Model):
         related_name='doctor_profile'
     )
 
-    speciality = models.ManyToManyField(
+    specialities = models.ManyToManyField(
         Speciality,
         related_name='doctors'
     )
@@ -30,7 +30,7 @@ class DoctorProfile(models.Model):
         blank=True
     )
 
-    experience_years = models.PositiveIntegerField(
+    experienced_years = models.PositiveIntegerField(
         default=0
     )
 

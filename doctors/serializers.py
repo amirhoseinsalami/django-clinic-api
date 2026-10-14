@@ -28,7 +28,7 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DoctorAvailability
-        feilds = [
+        fields = [
             'id',
             'day_of_week',
             'start_time',
@@ -57,7 +57,7 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorProfile
 
-        feilds = [
+        fields = [
             'id',
             'user',
             'specilities',

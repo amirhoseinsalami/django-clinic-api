@@ -5,9 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from .serializers import RegisterSerializer, MeSerializer
 
+from drf_spectacular.utils import extend_schema
+
+
 
 class RegisterView(APIView):
 
+    @extend_schema(request=RegisterSerializer, responses=RegisterSerializer)
     def post(self, request):
 
         serializer = RegisterSerializer(
@@ -36,6 +40,7 @@ class MeView(APIView):
         IsAuthenticated
     ]
 
+    @extend_schema(responses=MeSerializer)
     def get(self, request):
 
         serializer = MeSerializer(request.user)

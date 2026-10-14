@@ -8,6 +8,8 @@ from .services import create_payment
 from .serializers import PaymentSerializer
 from appointments.models import Appointment
 
+from drf_spectacular.utils import extend_schema
+
 
 class CreatePaymentView(APIView):
 
@@ -15,6 +17,7 @@ class CreatePaymentView(APIView):
         IsAuthenticated
     ]
 
+    @extend_schema(request=PaymentSerializer, responses=PaymentSerializer)
     def post(self, request):
         appointment_id = request.data.get('appointment')
         appointment = Appointment.objects.get(id=appointment_id)
@@ -32,6 +35,7 @@ class CreatePaymentView(APIView):
 
 class PaymentCallbackView(APIView):
 
+    @extend_schema(exclude=True)
     def post(self, request):
         transaction_id = request.data.get('transcation_id')
         status_value = request.data.get('status')
