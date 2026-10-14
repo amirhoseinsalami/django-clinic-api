@@ -6,6 +6,7 @@ from accounts.models import User
 
 from appointments.models import Appointment
 
+from doctors.models import DoctorProfile
 
 @pytest.mark.django_db
 def test_patient_cannot_see_other_patient_appointment():
@@ -22,11 +23,21 @@ def test_patient_cannot_see_other_patient_appointment():
         role="PATIENT"
        )
 
-    appointment = Appointment.objects.create(
-    patient=patient2,
-    doctor='dr ali',
-    appointment_time="2026-10-20T10:00:00"
+    doctor_user = User.objects.create_user(
+    username="dr ali",
+    password="ali6251",
+    role="DOCTOR"
 )
+
+    doctor = DoctorProfile.objects.create(
+        user=doctor_user
+    )
+
+    appointment = Appointment.objects.create(
+        patient=patient2,
+        doctor=doctor,
+        appointment_time="2026-10-20T10:00:00"
+    )
 
     client = APIClient()
 
@@ -71,7 +82,7 @@ def test_cannot_book_same_time_twice():
     )
 
     first = client.post(
-        f'/api/appointment/',
+        f'/api/appointments/',
         {
             'doctor' : doctor.id,
             'appointment_time' : '2024-10-9T10:30:00'
@@ -83,7 +94,7 @@ def test_cannot_book_same_time_twice():
     )
 
     second = client.post(
-        f'/api/appointment/',
+        f'/api/appointments/',
         {
             'doctor' : doctor.id,
             'appointment_time' : '2024-10-9T10:30:00'
