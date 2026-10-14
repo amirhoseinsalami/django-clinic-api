@@ -4,8 +4,8 @@ class IsPatientOrDoctor(BasePermission):
 
     def has_permission(self, request, view):    
         return (
-            self.user.is_authenticated 
-            and self.user.role in ['PATIENT', 'DOCTOR']
+            request.user.is_authenticated 
+            and request.user.role in ['PATIENT', 'DOCTOR']
         )
 
 

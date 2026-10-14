@@ -30,8 +30,10 @@ def test_patient_cannot_see_other_patient_appointment():
 )
 
     doctor = DoctorProfile.objects.create(
-        user=doctor_user
-    )
+    user=doctor_user,
+    experienced_years=10,
+    consultation_fee=500000
+)
 
     appointment = Appointment.objects.create(
         patient=patient2,
@@ -67,11 +69,17 @@ def test_cannot_book_same_time_twice():
         role="PATIENT"
        )
 
-    doctor = User.objects.create_user(
-        username='dr ali',
-        password='ali6251',
-        role="DOCTOR"
-       )
+    doctor_user = User.objects.create_user(
+    username="dr ali",
+    password="ali6251",
+    role="DOCTOR"
+)
+
+    doctor = DoctorProfile.objects.create(
+        user=doctor_user,
+        experienced_years=10,
+        consultation_fee=500000
+    )
 
     
 
