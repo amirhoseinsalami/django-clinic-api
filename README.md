@@ -149,6 +149,12 @@ Run:
 pytest
 ```
 
+## API Documentation
+
+Swagger documentation is available at:
+
+http://127.0.0.1:8000/api/docs/
+
 ## Main API Endpoints
 
 Authentication:

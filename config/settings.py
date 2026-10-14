@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "corsheaders",
+    "drf_spectacular",
 
     # Third party
     "rest_framework",
@@ -83,12 +84,28 @@ INSTALLED_APPS = [
     'reviews',
 ]
 
+SPECTACULAR_SETTINGS = {
+
+    "TITLE":
+    "Clinic API",
+
+    "DESCRIPTION":
+    "Medical clinic management API",
+
+    "VERSION":
+    "1.0.0",
+
+}
+
 REST_FRAMEWORK = {
 
     "DEFAULT_AUTHENTICATION_CLASSES": [
 
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+
+    "DEFAULT_SCHEMA_CLASS":
+    "drf_spectacular.openapi.AutoSchema",
 
     "DEFAULT_THROTTLE_CLASSES":[
 
