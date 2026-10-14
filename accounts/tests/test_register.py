@@ -11,7 +11,7 @@ def test_user_can_register():
     client = APIClient()
 
     response = client.post(
-        'api/acoounts/register/',
+        '/api/accounts/register/',
         {
             'username' : 'amir',
             'email' : 'amir@gmail.com',

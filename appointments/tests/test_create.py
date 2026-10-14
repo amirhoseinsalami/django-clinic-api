@@ -22,7 +22,7 @@ def test_patient_can_create_appointment():
         role='DOCTOR'
     )
 
-    doctor = DoctorProfile.objects.create_user(
+    doctor = DoctorProfile.objects.create(
         user=doctor_user,
         experience_years=10,
         consultation_fee=500000
@@ -35,7 +35,7 @@ def test_patient_can_create_appointment():
     )
 
     response = client.post(
-        'api/appointments/',
+        '/api/appointments/',
         {
             'doctor' : doctor.id,
             'appointment_time' : '2026-10-10T10:30:00'

@@ -15,7 +15,7 @@ def test_user_can_login():
     client = APIClient()
 
     response = client.post(
-        'api/login/',
+        '/api/login/',
         {
             'username' : 'amir',
             'password' : 'amir123456'

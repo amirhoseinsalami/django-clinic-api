@@ -23,8 +23,10 @@ def test_patient_cannot_see_other_patient_appointment():
        )
 
     appointment = Appointment.objects.create(
-        patient=patient2
-    )
+    patient=patient2,
+    doctor='dr ali',
+    appointment_time="2026-10-20T10:00:00"
+)
 
     client = APIClient()
 
@@ -33,7 +35,7 @@ def test_patient_cannot_see_other_patient_appointment():
     )
 
     response = client.get(
-        f'api/appointment/{appointment.id}/'
+        f'/api/appointments/{appointment.id}/'
     )
 
     assert response.status_code == 404  # Because from the user's perspective:This object does not exist;This prevents information leakage.
@@ -69,7 +71,7 @@ def test_cannot_book_same_time_twice():
     )
 
     first = client.post(
-        f'api/appointment/',
+        f'/api/appointment/',
         {
             'doctor' : doctor.id,
             'appointment_time' : '2024-10-9T10:30:00'
@@ -81,7 +83,7 @@ def test_cannot_book_same_time_twice():
     )
 
     second = client.post(
-        f'api/appointment/',
+        f'/api/appointment/',
         {
             'doctor' : doctor.id,
             'appointment_time' : '2024-10-9T10:30:00'
