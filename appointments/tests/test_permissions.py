@@ -94,11 +94,13 @@ def test_cannot_book_same_time_twice(mock_email):
         user=patient1
     )
 
+    appointment_time = timezone.now() + timedelta(days=5)
+
     first = client.post(
         f'/api/appointments/',
         {
             'doctor' : doctor.id,
-            'appointment_time' : timezone.now() + timedelta(days=5)
+            'appointment_time' : appointment_time
         }
     )
 
@@ -110,7 +112,7 @@ def test_cannot_book_same_time_twice(mock_email):
         f'/api/appointments/',
         {
             'doctor' : doctor.id,
-            'appointment_time' : timezone.now() + timedelta(days=5)
+            'appointment_time' : appointment_time
         }
     )
 
