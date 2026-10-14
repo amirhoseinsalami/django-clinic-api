@@ -1,5 +1,7 @@
 import pytest
 
+from unittest.mock import patch
+
 from rest_framework.test import APIClient
 
 from accounts.models import User
@@ -9,9 +11,9 @@ from doctors.models import DoctorProfile
 from django.utils import timezone
 from datetime import timedelta
 
-
+@patch("appointments.services.send_appointment_email.delay")
 @pytest.mark.django_db
-def test_patient_can_create_appointment():
+def test_patient_can_create_appointment(mock_email):
 
     patient = User.objects.create_user(
         username='amir',

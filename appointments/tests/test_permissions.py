@@ -58,7 +58,8 @@ def test_patient_cannot_see_other_patient_appointment():
 
 
 @pytest.mark.django_db
-def test_cannot_book_same_time_twice():
+@patch("appointments.services.send_appointment_email.delay")
+def test_cannot_book_same_time_twice(mock_email):
 
     patient1 = User.objects.create_user(
         username='amir',
