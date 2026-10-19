@@ -30,10 +30,18 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "False").lower() in {
+    "true", "1", "yes"
+}
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1",
+    ).split(",")
+    if host.strip()
+]
 
 
 from celery.schedules import crontab
@@ -127,7 +135,11 @@ REST_FRAMEWORK = {
 
     "DEFAULT_FILTER_BACKENDS": [
 
-        "django_filters.rest_framework.DjangoFilterBackend"
+        "django_filters.rest_framework.DjangoFilterBackend",
+        
+        "rest_framework.filters.SearchFilter",
+
+        "rest_framework.filters.OrderingFilter",
     ],
 
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -292,4 +304,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
