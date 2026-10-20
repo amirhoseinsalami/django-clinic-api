@@ -19,14 +19,14 @@ class DoctorViewSet(ReadOnlyModelViewSet):
     ]
 
     search_fields = [
-        'user__first_name',
-        'user__last_name',
-        'bio'
+        'user__username',
+        'speciality'
     ]
 
     ordering_fields = [
         'experience_years',
-        'consultation_fee'
+        'consultation_fee',
+        "average_rating",
     ]
 
     filterset_fields = [

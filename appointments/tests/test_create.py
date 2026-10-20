@@ -50,4 +50,31 @@ def test_patient_can_create_appointment(mock_email):
     assert response.status_code == 201
 
 
+@pytest.mark.django_db
+def test_cannot_book_past_time(
+    api_client,
+    patient,
+    doctor
+):
 
+    api_client.force_authenticate(
+        user=patient
+    )
+
+
+    response = api_client.post(
+
+        "/api/appointments/",
+
+        {
+            "doctor": doctor.id,
+
+            "appointment_time":
+            "2020-01-01T10:00:00"
+
+        }
+
+    )
+
+
+    assert response.status_code == 400

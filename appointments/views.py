@@ -9,6 +9,7 @@ from .services import create_appointment, cancel_appointment
 from .permissions import IsAppointmentOwner, IsPatientOrDoctor
 
 from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 
 class AppointmentViewSet(ModelViewSet):
@@ -23,10 +24,10 @@ class AppointmentViewSet(ModelViewSet):
     def get_queryset(self):
         user = self.request.user
 
-        if user == 'PATIENT':
+        if user.role == 'PATIENT':
             return Appointment.objects.filter(patient=user).select_related('doctor', 'doctor__user')
 
-        if user == 'DOCTOR':
+        if user.role == 'DOCTOR':
             return Appointment.objects.filter(doctor__user=user).select_related('patient', 'doctor')
 
         return Appointment.objects.none()
@@ -47,18 +48,17 @@ class AppointmentViewSet(ModelViewSet):
 
         return super().get_permissions()  # check permissions in the permission_classes
 
-    def perform_create(self, serializer):  # run on serializer.save() 
-        
-        user = self.request.user
+    def perform_create(self, serializer):
 
-        appointment = create_appointment(  # instead of Appointment.objects.create
-            patient=user,
-            doctor=serializer.validated_data['doctor'],
-            appointment_time=serializer.validated_data['appointment_time']
-        )
+        try:
+            create_appointment(
+                patient=self.request.user,
+                doctor=serializer.validated_data["doctor"],
+                appointment_time=serializer.validated_data["appointment_time"]
+            )
 
-
-        serializer.instance = appointment   # Now the serailizer know whom should serilize 
+        except ValidationError as e:
+            raise DRFValidationError(str(e))   # Now the serailizer know whom should serilize 
 
 
     @action(detail=True, methods=['post']) # detail=True means Need object ID
