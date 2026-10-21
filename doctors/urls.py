@@ -8,7 +8,7 @@ from .views import DoctorViewSet
 router = DefaultRouter()
 
 router.register(
-    'dcotors', # endpoint
+    'doctors', # endpoint
     DoctorViewSet,
     basename='doctor'
 )
