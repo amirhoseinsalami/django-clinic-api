@@ -50,18 +50,11 @@ jobs:
       - name: Run tests
         run: pytest
 
-  deploy:
-    name: Build and Deploy
+    deploy:
+    name: Deploy to Production
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: read
-
-    concurrency:
-      group: clinic-production
-      cancel-in-progress: false
 
     env:
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
@@ -69,25 +62,6 @@ jobs:
       DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
 
     steps:
-      - name: Checkout tested commit
-        uses: actions/checkout@v4
-
-      - name: Build Django image
-        run: docker build -t clinic-api-web:latest .
-
-      - name: Pull runtime images
-        run: |
-          docker pull postgres:16
-          docker pull nginx:stable-alpine
-
-      - name: Package Docker images
-        run: |
-          docker save \
-            clinic-api-web:latest \
-            postgres:16 \
-            nginx:stable-alpine \
-            | gzip -1 > images.tar.gz
-
       - name: Configure SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -95,26 +69,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          test -n "$DEPLOY_SSH_KEY"
-          test -n "$DEPLOY_KNOWN_HOSTS"
-          test -n "$DEPLOY_HOST"
-          test -n "$DEPLOY_PORT"
-          test -n "$DEPLOY_USER"
-
           install -d -m 700 "$HOME/.ssh"
 
-          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/clinic_deploy"
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          printf '%s\n' "$DEPLOY_SSH_KEY" \
+            > "$HOME/.ssh/clinic_deploy"
+
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" \
+            > "$HOME/.ssh/known_hosts"
 
           chmod 600 "$HOME/.ssh/clinic_deploy"
           chmod 600 "$HOME/.ssh/known_hosts"
 
-          ssh-keygen -y -f "$HOME/.ssh/clinic_deploy" > /dev/null
-
-          ssh-keygen -F "[$DEPLOY_HOST]:$DEPLOY_PORT" \
-            -f "$HOME/.ssh/known_hosts" > /dev/null
-
-      - name: Test SSH connectivity
+      - name: Test SSH
         run: |
           ssh \
             -i "$HOME/.ssh/clinic_deploy" \
@@ -124,22 +90,9 @@ jobs:
             -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
             -o BatchMode=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            'printf "SSH connection successful\n"'
+            'echo "SSH connection successful"'
 
-      - name: Transfer images and configuration
-        run: |
-          scp \
-            -i "$HOME/.ssh/clinic_deploy" \
-            -P "$DEPLOY_PORT" \
-            -o IdentitiesOnly=yes \
-            -o StrictHostKeyChecking=yes \
-            -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
-            images.tar.gz \
-            docker-compose.prod.yml \
-            nginx.conf \
-            "$DEPLOY_USER@$DEPLOY_HOST:/home/deploy/incoming/"
-
-      - name: Deploy on server
+      - name: Deploy application
         run: |
           ssh \
             -i "$HOME/.ssh/clinic_deploy" \
