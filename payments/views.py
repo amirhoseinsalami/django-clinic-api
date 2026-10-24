@@ -19,16 +19,26 @@ class CreatePaymentView(APIView):
 
     @extend_schema(request=PaymentSerializer, responses=PaymentSerializer)
     def post(self, request):
-        appointment_id = request.data.get('appointment')
-        appointment = Appointment.objects.get(id=appointment_id)
-        amount = request.data.get('amount')
+        appointment_id = request.data.get("appointment")
 
-        payment = create_payment(appointment_id, amount)
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
 
-        serailizer = PaymentSerializer(payment)
+            payment = create_payment(
+                appointment=appointment,
+                user=request.user
+            )
+
+        except Appointment.DoesNotExist:
+            return Response(
+                {"detail": "Appointment not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = PaymentSerializer(payment)
 
         return Response(
-            serailizer.data,
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
