@@ -61,12 +61,19 @@ class AppointmentViewSet(ModelViewSet):
             raise DRFValidationError(str(e))   # Now the serailizer know whom should serilize 
 
 
-    @action(detail=True, methods=['post']) # detail=True means Need object ID
+    @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
 
         appointment = self.get_object()
 
-        appointment = cancel_appointment(appointment, request.user)
+        try:
+            appointment = cancel_appointment(
+                appointment,
+                request.user
+            )
+
+        except ValidationError as e:
+            raise DRFValidationError(str(e))
 
         serializer = self.get_serializer(appointment)
 

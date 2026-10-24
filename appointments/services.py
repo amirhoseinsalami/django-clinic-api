@@ -57,7 +57,7 @@ def cancel_appointment(appointment, user):
     if appointment.appointment_time < timezone.now():
         raise ValidationError('Past appointment can not be cancelled')
 
-    if user.role == 'PATEINT':
+    if user.role == 'PATIENT':
         if appointment.patient != user:
             raise ValidationError('Not your appointent')
 
