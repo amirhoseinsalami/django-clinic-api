@@ -123,4 +123,4 @@ jobs:
             -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
             -o BatchMode=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            'sudo -n bash /usr/local/sbin/deploy-clinic-api'
+            'sudo -n /usr/local/sbin/deploy-clinic-api'
