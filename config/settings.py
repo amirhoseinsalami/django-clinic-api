@@ -85,11 +85,11 @@ INSTALLED_APPS = [
 
     # Our apps
     "accounts",
-    'doctors',
+    'doctors.apps.DoctorsConfig',
     'appointments',
     'common',
     'payments',
-    'reviews',
+    'reviews.apps.ReviewsConfig',
 ]
 
 SPECTACULAR_SETTINGS = {
