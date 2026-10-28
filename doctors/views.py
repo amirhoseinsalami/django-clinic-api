@@ -2,12 +2,15 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
 from django.db.models import Avg
 
 from .models import DoctorProfile
 from .serializers import DoctorSerializer
 
-
+@method_decorator(cache_page(300), name="list")
 class DoctorViewSet(ReadOnlyModelViewSet):
 
     serializer_class = DoctorSerializer
