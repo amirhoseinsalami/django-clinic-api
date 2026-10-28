@@ -1,0 +1,31 @@
+[1mdiff --git a/doctors/apps.py b/doctors/apps.py[m
+[1mindex 265f836..fbc8d87 100644[m
+[1m--- a/doctors/apps.py[m
+[1m+++ b/doctors/apps.py[m
+[36m@@ -3,3 +3,6 @@[m [mfrom django.apps import AppConfig[m
+ [m
+ class DoctorsConfig(AppConfig):[m
+     name = 'doctors'[m
+[32m+[m
+[32m+[m[32m    def ready(self):[m
+[32m+[m[32m        import doctors.signals[m
+[1mdiff --git a/doctors/signals.py b/doctors/signals.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0906450[m
+[1m--- /dev/null[m
+[1m+++ b/doctors/signals.py[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32mfrom django.core.cache import cache[m
+[32m+[m[32mfrom django.db.models.signals import post_delete, post_save[m
+[32m+[m[32mfrom django.dispatch import receiver[m
+[32m+[m
+[32m+[m[32mfrom .models import Speciality[m
+[32m+[m
+[32m+[m
+[32m+[m[32mSPECIALITIES_CACHE_KEY = "clinic:specialities:v1"[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@receiver(post_save, sender=Speciality)[m
+[32m+[m[32m@receiver(post_delete, sender=Speciality)[m
+[32m+[m[32mdef invalidate_specialities_cache(sender, **kwargs):[m
+[32m+[m[32m    cache.delete(SPECIALITIES_CACHE_KEY)[m
