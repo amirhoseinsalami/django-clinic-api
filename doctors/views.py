@@ -7,8 +7,13 @@ from django.views.decorators.cache import cache_page
 
 from django.db.models import Avg
 
-from .models import DoctorProfile
-from .serializers import DoctorSerializer
+from .models import DoctorProfile, Speciality
+from .serializers import DoctorSerializer, SpecialitySerializer
+
+from django.core.cache import cache
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+
 
 @method_decorator(cache_page(300), name="list")
 class DoctorViewSet(ReadOnlyModelViewSet):
@@ -41,3 +46,34 @@ class DoctorViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
 
         return DoctorProfile.objects.filter(is_verified=True).select_related('user').prefetch_related('specialities', 'availability').annotate(average_rating=Avg('reviews__rating'))
+
+
+
+
+class SpecialityListView(ListAPIView):
+    serializer_class = SpecialitySerializer
+
+    def list(self, request, *args, **kwargs):
+        cache_key = "clinic:specialities:v1"
+
+        data = cache.get(cache_key)
+
+        if data is None:
+            data = list(
+                Speciality.objects
+                .order_by("name")
+                .values("id", "name")
+            )
+
+            cache.set(
+                cache_key,
+                data,
+                timeout=300,
+            )
+
+        page = self.paginate_queryset(data)
+
+        if page is not None:
+            return self.get_paginated_response(page)
+
+        return Response(data)

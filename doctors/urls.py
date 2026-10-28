@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from .views import DoctorViewSet
+from .views import DoctorViewSet, SpecialityListView
 
 
 router = DefaultRouter()
@@ -14,5 +14,10 @@ router.register(
 )
 
 urlpatterns = [
+    path(
+        "specialities/",
+        SpecialityListView.as_view(),
+        name="speciality-list",
+    ),
     path('', include(router.urls))
 ]
