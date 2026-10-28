@@ -32,9 +32,9 @@ def create_appointment(patient, doctor, appointment_time):
         appointment_time=appointment_time
     )
 
-    send_appointment_email.delay(
-        appointment.id
-    )
+    transaction.on_commit(
+        lambda : send_appointment_email.delay(appointment.id)
+        )
 
     return appointment
 
