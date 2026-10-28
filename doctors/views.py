@@ -27,13 +27,13 @@ class DoctorViewSet(ReadOnlyModelViewSet):
     ]
 
     search_fields = [
-        'user__username',
-        'speciality'
+        "user__username",
+        "specialities__name",
     ]
 
     ordering_fields = [
-        'experience_years',
-        'consultation_fee',
+        "experienced_years",
+        "consultation_fee",
         "average_rating",
     ]
 

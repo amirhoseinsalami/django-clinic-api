@@ -49,7 +49,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     average_rating = serializers.FloatField(read_only=True)
 
-    specilities = SpecialitySerializer(
+    specialities = SpecialitySerializer(
         read_only=True,
         many=True
     )
@@ -60,7 +60,7 @@ class DoctorSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'user',
-            'specilities',
+            'specialities',
             'bio',
             'experienced_years',
             'consultation_fee',
